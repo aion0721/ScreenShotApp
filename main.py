@@ -1,13 +1,13 @@
+import tkinter as tk
 import pyautogui
 import pygetwindow as gw
 from PIL import Image
 import keyboard
 from datetime import datetime
 import os
-import time
 
 # スクリーンショットを保存するディレクトリ
-save_directory = "H:\python\ss\screenshots"
+save_directory = "H:/python/ss/screenshots"
 
 # ディレクトリが存在しない場合は作成
 if not os.path.exists(save_directory):
@@ -33,18 +33,17 @@ def take_screenshot_of_active_window():
     else:
         print("No active window found.")
 
-# F11キーの押下を監視
+# Tkinterウィンドウを作成
+root = tk.Tk()
+root.title("Screenshot Tool")
+root.geometry("300x100")
+
+# 説明ラベルを追加
+label = tk.Label(root, text="Press Alt + Control + S to take a screenshot of the active window.")
+label.pack(pady=20)
+
 # Alt + Control + Sキーの押下を監視
 keyboard.add_hotkey('alt+ctrl+s', take_screenshot_of_active_window)
 
-print("Press Alt + Control + S to take a screenshot of the active window.")
-
-
-# プログラムを終了しないようにループ
-# プログラムを終了しないようにループ
-try:
-    while True:
-        # イベントループを効率的に管理するために短いスリープを追加
-        time.sleep(0.1)
-except KeyboardInterrupt:
-    print("Program terminated.")
+# Tkinterのイベントループを開始
+root.mainloop()
