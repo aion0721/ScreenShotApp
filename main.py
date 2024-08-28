@@ -1,10 +1,11 @@
 import tkinter as tk
 import pyautogui
 import pygetwindow as gw
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import keyboard
 from datetime import datetime
 import os
+import socket
 from win10toast import ToastNotifier
 
 # スクリーンショットを保存するディレクトリ
@@ -27,16 +28,29 @@ def take_screenshot_of_active_window():
         # スクリーンショットをウィンドウの領域にクロップ
         cropped_screenshot = screenshot.crop((left, top, left + width, top + height))
         
-        # 現在の日時をファイル名に使用
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_path = os.path.join(save_directory, f"screenshot_{timestamp}.png")
+        # 現在の日時とホスト名を取得
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        hostname = socket.gethostname()
         
-        # クロップした画像を保存
+        # テキストを追加
+        draw = ImageDraw.Draw(cropped_screenshot)
+        text = f"{timestamp}\n{hostname}"
+        font = ImageFont.load_default()
+        # テキストのバウンディングボックスを取得
+        text_bbox = draw.textbbox((0, 0), text, font=font)
+        text_size = (text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1])
+        text_position = (cropped_screenshot.width - text_size[0] - 10, cropped_screenshot.height - text_size[1] - 10)
+        draw.text(text_position, text, font=font, fill="white")
+        
+        # ファイルパスを生成
+        file_path = os.path.join(save_directory, f"screenshot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
+        
+        # 画像を保存
         cropped_screenshot.save(file_path)
         print(f"Screenshot saved to {file_path}")
         
         # トースト通知を表示
-        toaster.show_toast("スクリーンショット", "スクリーンショットが保存されました。", duration=3)
+        toaster.show_toast("スクリーンショット", "スクリーンショットが保存されました。", duration=3, threaded=True)
     else:
         print("No active window found.")
 
