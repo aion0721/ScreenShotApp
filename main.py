@@ -5,17 +5,17 @@ from PIL import Image
 import keyboard
 from datetime import datetime
 import os
-
-def get_desktop_path():
-    # Windowsのユーザーのデスクトップパスを取得
-    return os.path.join(os.path.expanduser('~'), 'Desktop')
+from win10toast import ToastNotifier
 
 # スクリーンショットを保存するディレクトリ
-save_directory = os.path.join(get_desktop_path(), 'screenshots')
+save_directory = os.path.join(os.path.expanduser('~'), 'Desktop', 'screenshots')
 
 # ディレクトリが存在しない場合は作成
 if not os.path.exists(save_directory):
     os.makedirs(save_directory)
+
+# トースト通知のインスタンスを作成
+toaster = ToastNotifier()
 
 def take_screenshot_of_active_window():
     # アクティブウィンドウを取得
@@ -34,6 +34,9 @@ def take_screenshot_of_active_window():
         # クロップした画像を保存
         cropped_screenshot.save(file_path)
         print(f"Screenshot saved to {file_path}")
+        
+        # トースト通知を表示
+        toaster.show_toast("スクリーンショット", "スクリーンショットが保存されました。", duration=3)
     else:
         print("No active window found.")
 
