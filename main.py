@@ -6,8 +6,12 @@ import keyboard
 from datetime import datetime
 import os
 
+def get_desktop_path():
+    # Windowsのユーザーのデスクトップパスを取得
+    return os.path.join(os.path.expanduser('~'), 'Desktop')
+
 # スクリーンショットを保存するディレクトリ
-save_directory = "H:/python/ss/screenshots"
+save_directory = os.path.join(get_desktop_path(), 'screenshots')
 
 # ディレクトリが存在しない場合は作成
 if not os.path.exists(save_directory):
